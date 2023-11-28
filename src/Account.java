@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Account {
     private final String username;
@@ -11,7 +8,7 @@ public class Account {
     public Account(String username) {
         this.username = username;
         Random rand = new Random();
-        authToken = rand.nextInt(10000); //authToken can be any integer value between 0 and 9999
+        authToken = rand.nextInt(20000); //authToken can be any integer value between 0 and 19999
         messageBox = new ArrayList<>();
     }
 
@@ -46,5 +43,12 @@ public class Account {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account account)) return false;
+        return getAuthToken() == account.getAuthToken();
     }
 }

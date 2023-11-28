@@ -10,8 +10,10 @@ public class Message implements Serializable {
     private final long messageID;
 
     public Message(String sender,String receiver, String body) {
-        messageID = counter;
-        counter++;
+        synchronized (this) {
+            messageID = counter;
+            counter++;
+        }
 
         this.isRead = false;
         this.receiver = receiver;
