@@ -3,7 +3,7 @@ import java.util.*;
 public class Account {
     private final String username;
     private int authToken;
-    private final List<Message> messageBox;
+    private final ArrayList<Message> messageBox;
 
     public Account(String username) {
         this.username = username;
@@ -22,7 +22,7 @@ public class Account {
 
     public void regenerateAuthToken() {
         Random rand = new Random();
-        authToken = rand.nextInt(10000); //authToken can be any integer value between 0 and 9999
+        authToken = rand.nextInt(20000); //authToken can be any integer value between 0 and 9999
     }
 
     public List<Message> getMessageBox() {

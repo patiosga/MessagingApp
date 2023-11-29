@@ -3,15 +3,15 @@ import java.util.ArrayList;
 
 public interface MessengerInt extends Remote{
 
-    public int createAccount(String username);
+    public int createAccount(String username) throws RemoteException;
 
-    public ArrayList<String> showAccounts();
+    public ArrayList<String> showAccounts() throws RemoteException;
 
-    public String sendMessage(int authToken, String recipient, String messageBody);
+    public String sendMessage(int authToken, String recipient, String messageBody) throws RemoteException;
 
-    public ArrayList<String> showInbox(int authToken);
+    public ArrayList<String> showInbox(int authToken) throws RemoteException;
 
-    public String readMessage(int authToken, long messageID);
+    public String readMessage(int authToken, long messageID) throws RemoteException;
 
-    public int deleteMessage(int authToken, long messageID);
+    public int deleteMessage(int authToken, long messageID) throws RemoteException;
 }

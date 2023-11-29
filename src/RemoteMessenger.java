@@ -39,13 +39,13 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
     @Override
     public int createAccount(String username) {
         if (usernameExists(username))
-            return 1; // κωδικός existing username
+            return -1; // κωδικός existing username (-1)
         else {
             Account new_acc = new Account(username);
             while (authTokenExists(new_acc.getAuthToken()))
                 new_acc.regenerateAuthToken();
             accounts.add(new_acc);
-            return 0;
+            return new_acc.getAuthToken();
         }
     }
 
