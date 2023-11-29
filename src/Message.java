@@ -25,7 +25,7 @@ public class Message implements Serializable {
         return isRead;
     }
 
-    public void readMessage(boolean read) {
+    public void readMessage() {
         isRead = true;
     }
 
