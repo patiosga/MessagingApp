@@ -12,7 +12,8 @@ public class Client {
             // get reference for remote object
             MessengerInt stub = (MessengerInt) rmiRegistry.lookup("messenger");
 //            Account account = new Account("tester0");
-            //int token = stub.createAccount("tester0")
+            //int token = stub.createAccount("tester0");
+            //System.out.println((token0 = stub.createAccount("tester0")));
             int token0 = stub.createAccount("tester0");
             int token1 = stub.createAccount("tester1");
             int token2 = stub.createAccount("tester2");
@@ -26,10 +27,11 @@ public class Client {
             System.out.println(stub.sendMessage(token0, "tester3", "hello tester1"));
 
             //Show inbox
-//            System.out.println(stub.showInbox(token0) + "\n");
-//            System.out.println(stub.showInbox(token1) + "\n");
-//            System.out.println(stub.showInbox(token2) + "\n");
-//            System.out.println(stub.showInbox(-5));
+            System.out.println(stub.showInbox(token0) + "\n");
+            System.out.println(stub.showInbox(token1) + "\n");
+            System.out.println(stub.showInbox(token2) + "\n");
+            System.out.println(stub.showInbox(-1) + "\n");
+
 
         } catch (Exception e) {
             System.out.println(e);

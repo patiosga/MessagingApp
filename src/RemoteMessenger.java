@@ -49,7 +49,7 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
     }
 
     @Override
-    public synchronized int createAccount(String username) {
+    public int createAccount(String username) {
         //πρέπει να είναι synchronized για να αποφευχθεί η κατά λάθος δημιουργία δύο λογαριασμών με το ίδιο authToken
         if (usernameExists(username))
             return -1; // κωδικός existing username (-1)
