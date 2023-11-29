@@ -36,8 +36,21 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
         return false;
     }
 
+    private String getUsernameFromAuthToken(int authToken) {
+        if (accounts.isEmpty())
+            return null;
+        else {
+            for (Account account : accounts) {
+                if (account.getAuthToken() == authToken)
+                    return account.getUsername();
+            }
+        }
+        return null; // authToken δεν υπάρχει
+    }
+
     @Override
-    public int createAccount(String username) {
+    public synchronized int createAccount(String username) {
+        //πρέπει να είναι synchronized για να αποφευχθεί η κατά λάθος δημιουργία δύο λογαριασμών με το ίδιο authToken
         if (usernameExists(username))
             return -1; // κωδικός existing username (-1)
         else {
@@ -50,77 +63,75 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
     }
 
     @Override
-    public ArrayList<String> showAccounts() {
+    public String showAccounts() {
         ArrayList<String> usernames = new ArrayList<>();
         int counter = 1;
         if (accounts.isEmpty())
-            return usernames;
+            return "";
         for (Account account : accounts) {
             usernames.add(counter + ". " + account.getUsername()); // για να τυπώνει 1. <username1> κτλ
             counter++;
         }
-        return usernames;
+        return String.join("\n", usernames);
     }
 
     @Override
     public String sendMessage(int authToken, String recipient, String messageBody) {
-        return null;
+        String sender = getUsernameFromAuthToken(authToken);
+        if (sender == null)
+            return "Authentication error"; // authToken δεν αντιστοιχεί σε χρήστη
+        if (!usernameExists(recipient))
+            return "User does not exist"; // δεν υπάρχει recipient με αυτό το username
+        Message message = new Message(sender, recipient, messageBody);
+        messages.add(message);
+        return "OK";
     }
 
     @Override
-    public ArrayList<String> showInbox(int authToken) {
+    public String showInbox(int authToken) {
+        String username = getUsernameFromAuthToken(authToken);
         ArrayList<String> inboxMessages = new ArrayList<>();
         if (messages.isEmpty())
-            return inboxMessages;
+            return "";
         for (Message message : messages) {
-            inboxMessages.add(message.toString());
+            if (message.getReceiver().equals(username))
+                //παίρνω μηνύματα όπου το authToken αντιστοιχεί στον receiver
+                inboxMessages.add(message.toString());
         }
-        return inboxMessages;
+        return String.join("\n", inboxMessages);
     }
 
-
-    private String getUsernameFromAuthToken(int authToken) {
-        if (accounts.isEmpty())
-            return null;
-        else {
-            for (Account account : accounts) {
-                if (account.getAuthToken() == authToken)
-                    return account.getUsername();
-            }
-        }
-        return null; // authToken δεν υπάρχει
-    }
     @Override
     public String readMessage(int authToken, long messageID) {
-        String username = getUsernameFromAuthToken(authToken);
+        String username = getUsernameFromAuthToken(authToken); // αντιστοίχιση authToken με username
         if (username == null)
             return null; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2) / Παραδοχή ότι δε θα προκύψει ποτέ
         if (messages.isEmpty())
-            return null;  // το μήνυμα δεν υπάρχει (κωδικός 1)
+            return "Message ID does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
         for (int i = 0; i < messages.size(); i++) {
             if (username.equals(messages.get(i).getReceiver()) && messageID == messages.get(i).getMessageID()) {
                 messages.get(i).readMessage(); //!!!!!!!!!
                 return "(" + messages.get(i).getSender() + ") " +  messages.get(i).getBody(); // (<sender>) <message>
             }
         }
-        return null;
+        return "Message ID does not exist";
     }
 
     @Override
-    public int deleteMessage(int authToken, long messageID) {
+    public String deleteMessage(int authToken, long messageID) {
         String username = getUsernameFromAuthToken(authToken);
         if (username == null)
-            return 2; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2)
+            return null; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2)
         if (messages.isEmpty())
-            return 1;  // το μήνυμα δεν υπάρχει (κωδικός 1)
+            return "Message ID does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
         Iterator<Message> it = messages.iterator();
         while (it.hasNext()) {
             Message temp = it.next();
             if (messageID == temp.getMessageID() && username.equals(temp.getReceiver())) { // διαγράφω μήνυμα του receiver ωστε να μην εμφανίζεται στο inbox του
                 it.remove(); // βρέθηκε μήνυμα με messageID και διαγράφθηκε από τα messages
-                return 0; // όλα καλά (κωδικός 0)
+                return "OK"; // όλα καλά (κωδικός 0)
             }
         }
-        return 1;
+        return "Message ID does not exist";
     }
 }
