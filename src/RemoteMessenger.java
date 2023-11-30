@@ -3,9 +3,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.regex.*;
 
-
-// AUTHENTICATION WHEN IT IS NEEDED
 
 public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt{
     private final ArrayList<Account> accounts;
@@ -26,7 +25,7 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
         return false;
     }
 
-    private boolean authTokenExists(int authToken) {
+    public boolean authTokenExists(int authToken) {
         if (accounts.isEmpty())
             return false;
         for (Account account : accounts) {
@@ -46,6 +45,12 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
             }
         }
         return null; // authToken δεν υπάρχει
+    }
+
+    @Override
+    public boolean isValidUsername(String username) {
+        //trust me bro
+        return username.matches("[\\w]*"); //uses regex for word characters --> a-zA-Z_0-9
     }
 
     @Override
@@ -123,7 +128,7 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
         if (username == null)
             return null; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2)
         if (messages.isEmpty())
-            return "Message ID does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
+            return "Message does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
         Iterator<Message> it = messages.iterator();
         while (it.hasNext()) {
             Message temp = it.next();
@@ -132,6 +137,6 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
                 return "OK"; // όλα καλά (κωδικός 0)
             }
         }
-        return "Message ID does not exist";
+        return "Message does not exist";
     }
 }

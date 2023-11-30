@@ -61,9 +61,9 @@ public class Message implements Serializable {
     public String toString() {
         String message = messageID + ". from: " + sender;
         if (isRead) {
-            return message + "*";
+            return message;
         }
-        return message;
+        return message + "*";
     }
 
     @Override

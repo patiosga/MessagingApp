@@ -1,41 +1,71 @@
-import java.io.*;
-import java.net.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 
 public class Client {
     public static void main(String[] args) {
+        //Create account : java client <ip> <port number> 1 <username> --> -1 : Sorry, the user already exists
+        //Show accounts : java client <ip> <port number> 2 <authToken>
+        //Send message : java client <ip> <port number> 3 <authToken> <recipient> <message_body>
+        //Show inbox : java client <ip> <port number> 4 <authToken>
+        //Read message : java client <ip> <port number> 5 <authToken> <message_id>
+        //Delete message : java client <ip> <port number> 6 <authToken> <message_id>
+
+
+        int fnID = 1;
+        String ip = "localhost"; // args[0]
+        int port = 5000; // args[1]
+        String username = "tester_123"; // args[3] για 1
+        String recipient = "receiver"; // args[4] για 3
+        int authToken = 1024; // args[3] εκτός από fn_id = 1 που δε χρησιμοποιείται
+        long message_id = 5; // args[4] για fnID = 5, 6
+        String body = " hello world "; // args[5] για 3
+        // Establish connection to RMI registry
         try {
             // connect to the RMI registry
-            Registry rmiRegistry = LocateRegistry.getRegistry("localhost",5000);
+            Registry rmiRegistry = LocateRegistry.getRegistry(ip,port); // --> αλλαγή με args (!)
             // get reference for remote object
             MessengerInt stub = (MessengerInt) rmiRegistry.lookup("messenger");
-//            Account account = new Account("tester0");
-            //int token = stub.createAccount("tester0");
-            //System.out.println((token0 = stub.createAccount("tester0")));
-            int token0 = stub.createAccount("tester0");
-            int token1 = stub.createAccount("tester1");
-            int token2 = stub.createAccount("tester2");
-            System.out.println("Accounts   :\n" + stub.showAccounts());
-
-            //Send messages
-            System.out.println(stub.sendMessage(token0, "tester1", "hello tester1"));
-            System.out.println(stub.sendMessage(token1, "tester0", "hello tester0"));
-            System.out.println(stub.sendMessage(token2, "tester0", "hello tester0"));
-            System.out.println(stub.sendMessage(-5, "tester1", "hello tester1"));
-            System.out.println(stub.sendMessage(token0, "tester3", "hello tester1"));
-
-            //Show inbox
-            System.out.println(stub.showInbox(token0) + "\n");
-            System.out.println(stub.showInbox(token1) + "\n");
-            System.out.println(stub.showInbox(token2) + "\n");
-            System.out.println(stub.showInbox(-1) + "\n");
 
 
+            switch(fnID) {
+                case 1: // Create account
+                    if (!stub.isValidUsername(username))
+                        System.out.println("Invalid Username");
+                    else {
+                        int token = stub.createAccount(username);
+                        if (token == -1) // κωδικός για υπάρχον username
+                            System.out.println("Sorry, the user already exists");
+                        else
+                            System.out.println(token); //όλα πήγαν καλά και επιστρέφεται το authToken
+                    }
+                    break;
+                case 2: // Show accounts
+                    if (!stub.authTokenExists(authToken))
+                        System.out.println("Invalid authentication token");
+                    else
+                        System.out.println(stub.showAccounts());
+                    break;
+                case 3:
+                    // code block
+                    break;
+                case 4:
+                    // code block
+                    break;
+                case 5:
+                    // code block
+                    break;
+                case 6:
+                    // code block
+                    break;
+                default:
+                    // code block
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
+
+
+
     }
 }
 

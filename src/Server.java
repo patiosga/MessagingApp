@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public class Server {
     public static void main(String[] args) {
+
         try {
             RemoteMessenger stub = new RemoteMessenger();
             // create the RMI registry on port 5000

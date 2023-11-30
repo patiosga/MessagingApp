@@ -14,4 +14,8 @@ public interface MessengerInt extends Remote{
     public String readMessage(int authToken, long messageID) throws RemoteException;
 
     public String deleteMessage(int authToken, long messageID) throws RemoteException;
+
+    public boolean isValidUsername(String username) throws RemoteException;
+
+    public boolean authTokenExists(int token) throws RemoteException;
 }
