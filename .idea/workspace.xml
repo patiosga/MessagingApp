@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0d294d4-c347-4400-901d-43b5a22ccbb1" name="Changes" comment="working show inbox">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MessagingApp.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/testing.txt" afterDir="false" />
+    <list default="true" id="d0d294d4-c347-4400-901d-43b5a22ccbb1" name="Changes" comment="creating switch fnID menu">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Message.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MessengerInt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MessengerInt.java" afterDir="false" />
@@ -47,10 +42,11 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.Server">
+  <component name="RunManager" selected="Application.Client">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Client" />
       <module name="MessagingApp" />
+      <option name="PROGRAM_PARAMETERS" value="localhost 5000 1 tester" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -58,14 +54,19 @@
     <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Server" />
       <module name="MessagingApp" />
+      <option name="PROGRAM_PARAMETERS" value="5000" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Client" />
+      <item itemvalue="Application.Server" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Server" />
         <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Server" />
       </list>
     </recent_temporary>
   </component>
@@ -120,7 +121,14 @@
       <option name="project" value="LOCAL" />
       <updated>1701272381432</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="creating switch fnID menu">
+      <created>1701303534159</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1701303534159</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -141,6 +149,7 @@
     <MESSAGE value="Server is running and accepting method requests" />
     <MESSAGE value="Creating accounts, showing accounts and sending messages" />
     <MESSAGE value="working show inbox" />
-    <option name="LAST_COMMIT_MESSAGE" value="working show inbox" />
+    <MESSAGE value="creating switch fnID menu" />
+    <option name="LAST_COMMIT_MESSAGE" value="creating switch fnID menu" />
   </component>
 </project>

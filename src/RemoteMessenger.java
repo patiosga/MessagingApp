@@ -9,6 +9,7 @@ import java.util.regex.*;
 public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt{
     private final ArrayList<Account> accounts;
     private final ArrayList<Message> messages;
+
     protected RemoteMessenger() throws RemoteException {
         super();
         accounts = new ArrayList<>();
@@ -55,20 +56,27 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
 
     @Override
     public int createAccount(String username) {
-        //πρέπει να είναι synchronized για να αποφευχθεί η κατά λάθος δημιουργία δύο λογαριασμών με το ίδιο authToken
-        if (usernameExists(username))
-            return -1; // κωδικός existing username (-1)
-        else {
-            Account new_acc = new Account(username);
-            while (authTokenExists(new_acc.getAuthToken()))
-                new_acc.regenerateAuthToken();
-            accounts.add(new_acc);
-            return new_acc.getAuthToken();
+        synchronized (this) {
+            // πρέπει να είναι synchronized για να αποφευχθεί η κατά λάθος δημιουργία δύο λογαριασμών με το ίδιο authToken
+            if (usernameExists(username))
+                return -1; // κωδικός existing username (-1)
+            else {
+                synchronized (accounts) {
+                    Account new_acc = new Account(username);
+                    while (authTokenExists(new_acc.getAuthToken()))
+                        new_acc.regenerateAuthToken();
+                    accounts.add(new_acc);
+                    return new_acc.getAuthToken();
+                }
+            }
         }
     }
 
     @Override
-    public String showAccounts() {
+    public String showAccounts(int authToken) {
+        String sender = getUsernameFromAuthToken(authToken);
+        if (sender == null)
+            return "Invalid Auth Token"; // authToken δεν αντιστοιχεί σε χρήστη
         ArrayList<String> usernames = new ArrayList<>();
         int counter = 1;
         if (accounts.isEmpty())
@@ -84,17 +92,22 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
     public String sendMessage(int authToken, String recipient, String messageBody) {
         String sender = getUsernameFromAuthToken(authToken);
         if (sender == null)
-            return "Authentication error"; // authToken δεν αντιστοιχεί σε χρήστη
+            return "Invalid Auth Token"; // authToken δεν αντιστοιχεί σε χρήστη
         if (!usernameExists(recipient))
             return "User does not exist"; // δεν υπάρχει recipient με αυτό το username
-        Message message = new Message(sender, recipient, messageBody);
-        messages.add(message);
-        return "OK";
+        synchronized (messages) {
+            Message message = new Message(sender, recipient, messageBody);
+            messages.add(message);
+            return "OK";
+        }
     }
 
     @Override
     public String showInbox(int authToken) {
         String username = getUsernameFromAuthToken(authToken);
+        if (username == null)
+            return "Invalid Auth Token"; // authToken δεν αντιστοιχεί σε χρήστη
+        // authToken exists
         ArrayList<String> inboxMessages = new ArrayList<>();
         if (messages.isEmpty())
             return "";
@@ -110,7 +123,9 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
     public String readMessage(int authToken, long messageID) {
         String username = getUsernameFromAuthToken(authToken); // αντιστοίχιση authToken με username
         if (username == null)
-            return null; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2) / Παραδοχή ότι δε θα προκύψει ποτέ
+            return "Invalid Auth Token";
+        // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2) /
+        // Παραδοχή ότι δε θα προκύψει ποτέ αλλά υπάρχει παντού για να μη κρασάρει πουθενά κατά λάθος
         if (messages.isEmpty())
             return "Message ID does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
         for (int i = 0; i < messages.size(); i++) {
@@ -126,17 +141,19 @@ public class RemoteMessenger extends UnicastRemoteObject implements MessengerInt
     public String deleteMessage(int authToken, long messageID) {
         String username = getUsernameFromAuthToken(authToken);
         if (username == null)
-            return null; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2)
+            return "Invalid Auth Token"; // το authToken δεν αντιστοιχεί σε υπαρκτό χρήστη (κωδικός 2)
         if (messages.isEmpty())
-            return "Message does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
+            return "Message ID does not exist";  // το μήνυμα δεν υπάρχει (κωδικός 1)
         Iterator<Message> it = messages.iterator();
         while (it.hasNext()) {
             Message temp = it.next();
             if (messageID == temp.getMessageID() && username.equals(temp.getReceiver())) { // διαγράφω μήνυμα του receiver ωστε να μην εμφανίζεται στο inbox του
-                it.remove(); // βρέθηκε μήνυμα με messageID και διαγράφθηκε από τα messages
-                return "OK"; // όλα καλά (κωδικός 0)
+                synchronized (messages) { // συγχρονισμός πεδίου πίνακα μηνυμάτων κατά τη διαγραφή
+                    it.remove(); // βρέθηκε μήνυμα με messageID και διαγράφθηκε από τα messages
+                    return "OK"; // όλα καλά (κωδικός 0)
+                }
             }
         }
-        return "Message does not exist";
+        return "Message ID does not exist";
     }
 }

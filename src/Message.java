@@ -2,12 +2,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Message implements Serializable {
-    private static long counter = 0;
+    private static int counter = 0;
     private boolean isRead;
     private String receiver;
     private String sender;
     private String body;
-    private final long messageID;
+    private final int messageID;
 
     public Message(String sender,String receiver, String body) {
         synchronized (this) {
@@ -53,7 +53,7 @@ public class Message implements Serializable {
         this.body = body;
     }
 
-    public long getMessageID() {
+    public int getMessageID() {
         return messageID;
     }
 

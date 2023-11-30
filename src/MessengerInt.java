@@ -5,7 +5,7 @@ public interface MessengerInt extends Remote{
 
     public int createAccount(String username) throws RemoteException;
 
-    public String showAccounts() throws RemoteException;
+    public String showAccounts(int authToken) throws RemoteException;
 
     public String sendMessage(int authToken, String recipient, String messageBody) throws RemoteException;
 

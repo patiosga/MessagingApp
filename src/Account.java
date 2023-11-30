@@ -8,7 +8,7 @@ public class Account {
     public Account(String username) {
         this.username = username;
         Random rand = new Random();
-        authToken = rand.nextInt(20000); //authToken can be any integer value between 0 and 19999
+        authToken = rand.nextInt(2000); //authToken can be any integer value between 0 and 1999
         messageBox = new ArrayList<>();
     }
 

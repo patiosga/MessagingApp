@@ -1,8 +1,10 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Arrays;
 
 public class Client {
     public static void main(String[] args) {
+        // Παραδοχή : ΟΛΑ ΤΑ ARGUMENTS ΘΕΩΡΟΥΝΤΑΙ ΣΩΣΤΑ ΓΙΑ ΤΟ ΕΚΑΣΤΟΤΕ fn_id
         //Create account : java client <ip> <port number> 1 <username> --> -1 : Sorry, the user already exists
         //Show accounts : java client <ip> <port number> 2 <authToken>
         //Send message : java client <ip> <port number> 3 <authToken> <recipient> <message_body>
@@ -11,14 +13,18 @@ public class Client {
         //Delete message : java client <ip> <port number> 6 <authToken> <message_id>
 
 
-        int fnID = 1;
-        String ip = "localhost"; // args[0]
-        int port = 5000; // args[1]
-        String username = "tester_123"; // args[3] για 1
-        String recipient = "receiver"; // args[4] για 3
-        int authToken = 1024; // args[3] εκτός από fn_id = 1 που δε χρησιμοποιείται
-        long message_id = 5; // args[4] για fnID = 5, 6
-        String body = " hello world "; // args[5] για 3
+        int fnID = Integer.parseInt(args[2]);
+        String ip = args[0]; // args[0]
+        int port = Integer.parseInt(args[1]); // args[1]
+        String username = args[3]; // args[3] για 1
+        String recipient; // args[4] για 3
+        String body; // args[5] για 3
+        int message_id; // ορίζεται παρακάτω γιατί πρέπει να γίνει parsed
+
+        int authToken = -1; // ήθελε αρχικοποίηση για λόγους debugging
+        if (fnID != 1)
+            authToken = Integer.parseInt(args[3]); // args[3] εκτός από fn_id = 1 που δε χρησιμοποιείται
+
         // Establish connection to RMI registry
         try {
             // connect to the RMI registry
@@ -40,28 +46,29 @@ public class Client {
                     }
                     break;
                 case 2: // Show accounts
-                    if (!stub.authTokenExists(authToken))
-                        System.out.println("Invalid authentication token");
-                    else
-                        System.out.println(stub.showAccounts());
+                    System.out.println(stub.showAccounts(authToken));
                     break;
-                case 3:
-                    // code block
+                case 3: // Send message
+                    recipient = args[4]; // args[4] για 3
+                    body = args[5]; // args[5] για 3
+                    System.out.println(stub.sendMessage(authToken, recipient, body));
                     break;
-                case 4:
-                    // code block
+                case 4: // Show inbox
+                    System.out.println(stub.showInbox(authToken));
                     break;
-                case 5:
-                    // code block
+                case 5: // Read message
+                    message_id = Integer.parseInt(args[4]); // args[4] για fnID = 5, 6
+                    System.out.println(stub.readMessage(authToken, message_id));
                     break;
-                case 6:
-                    // code block
+                case 6: // Delete message
+                    message_id = Integer.parseInt(args[4]); // args[4] για fnID = 5, 6
+                    System.out.println(stub.deleteMessage(authToken, message_id));
                     break;
                 default:
                     // code block
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
 
