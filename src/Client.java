@@ -28,7 +28,7 @@ public class Client {
         // Establish connection to RMI registry
         try {
             // connect to the RMI registry
-            Registry rmiRegistry = LocateRegistry.getRegistry(ip,port); // --> αλλαγή με args (!)
+            Registry rmiRegistry = LocateRegistry.getRegistry(ip,port);
             // get reference for remote object
             MessengerInt stub = (MessengerInt) rmiRegistry.lookup("messenger");
 

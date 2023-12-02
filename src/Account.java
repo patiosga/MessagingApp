@@ -25,26 +25,6 @@ public class Account {
         authToken = rand.nextInt(20000); //authToken can be any integer value between 0 and 9999
     }
 
-    public List<Message> getMessageBox() {
-        return messageBox;
-    }
-
-    public void addMessage(Message message) {
-        messageBox.add(message);
-    }
-
-    public boolean deleteMessage(long messageID) {
-        Iterator<Message> it = messageBox.iterator();
-        while (it.hasNext()) {
-            Message temp = it.next();
-            if (messageID == temp.getMessageID()) {
-                it.remove(); // βρέθηκε μήνυμα με messageID και διαγράφθηκε από το messageBox
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
